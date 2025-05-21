@@ -19,12 +19,12 @@
         /* Container for the map, title, legend, and sources */
         .map-container {
             position: relative;
-            background-color: white; /* White border around everything */
+            /* background-color: white; White border around everything */
             padding: 5px;
             border-radius: 10px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2); /* Adds a soft shadow */
+            /* box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2); Adds a soft shadow */
             width: 100%; 
-            height: auto;
+            height: 500px;
             display: flex;
             flex-direction: column;
         }
@@ -81,7 +81,7 @@
 
     </style>
 </head>
-<body class="body" onLoad="resize();">
+<body class="body">
 
 <div class="map-container">
     <div class="header-container">
@@ -5917,22 +5917,17 @@
     </div> 
 </div> <!-- END MAP CONTAINER -->
 <script>
-    	  
-window.addEventListener('message', function(e) {
-  var $iframe = jQuery("#myIframe");
-  var eventName = e.data[0];
-  var data = e.data[1];
-  switch(eventName) {
-    case 'setHeight':
-      $iframe.height(data);
-      break;
-  }
-}, false);
+    function notifyParentResize() {
+        let height = 0; document.querySelectorAll('.page-wrapper > div').forEach(div => height += div.clientHeight); document.querySelector('.page-wrapper').style.height = height + 'px';
+        window.parent.postMessage({ 'type': 'resize', value: document.querySelector('.page-wrapper').clientHeight }, "https://fdd.lndo.site");
+        window.parent.postMessage({ 'type': 'resize', value: document.querySelector('.page-wrapper').clientHeight }, "https://staging.fdd.org");
+    }
+    let height = 0; document.querySelectorAll('.page-wrapper > div').forEach(div => height += div.clientHeight); document.querySelector('.page-wrapper').style.height = height + 'px';
 
-function resize() {
-  var height = document.getElementsByTagName("html")[0].scrollHeight;
-  window.parent.postMessage(["setHeight", height], "*"); 
-}
+    window.addEventListener('resize', notifyParentResize);
+    setTimeout(() => {
+        notifyParentResize();
+    }, 500);
 </script>
 </body>
 </html>
